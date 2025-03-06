@@ -3,88 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <title>Груша</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        const LOGO_URL = "https://pngicon.ru/file/uploads/grusha.png";
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
             background: linear-gradient(45deg, #83E8BA, #FFE27D);
             user-select: none;
+            -webkit-user-select: none;
             overflow-x: hidden;
             margin: 0;
-            padding-bottom: 50px;
+            padding: 0 0 60px;
+            min-height: 100vh;
             animation: fadeIn 1s ease-in;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
         }
+
         .score-board {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .score-board h1, .score-board p {
+
+        .score-board h1 {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             margin: 0;
+            display: flex;
+            align-items: center;
         }
-        .score-board h1 img.logo {
-            height: 30px;
-            vertical-align: middle;
-            margin-right: 10px;
+
+        .score-board p {
+            margin: 0;
+            font-size: clamp(0.9rem, 3vw, 1rem);
         }
+
         .auth-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: linear-gradient(45deg, #83E8BA, #FFE27D);
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
             cursor: pointer;
-            transition: transform 0.2s;
-            margin: 5px;
+            transition: transform 0.2s, background 0.2s;
+            touch-action: manipulation;
         }
+
         .auth-btn:hover { transform: scale(1.05); }
         .auth-btn:active { transform: scale(0.95); }
+
         .pear-btn {
-            font-size: 150px;
+            font-size: clamp(80px, 20vw, 150px);
             cursor: pointer;
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.1s ease-in-out;
             animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 5px 3px rgba(0,0,0,0.2));
             outline: none;
-            display: inline-block;
+            display: block;
+            margin: 20px auto;
+            touch-action: manipulation;
+            -webkit-user-drag: none;
         }
+
         .pear-btn:active { transform: scale(0.9); }
+
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
             100% { transform: translateY(0px); }
         }
+
+        .powerups {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            margin: 15px 0;
+        }
+
         .shop-item {
             background: white;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
-            margin: 10px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: transform 0.2s;
+            cursor: pointer;
+            touch-action: manipulation;
         }
-        .shop-item:hover { transform: translateX(10px); }
-        .powerups {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
+
+        .shop-item:hover { transform: translateX(5px); }
+        .shop-item:active { transform: scale(0.98); }
+
+        .shop-item h3 { 
+            margin: 0;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
         }
+
+        .shop-item p {
+            margin: 2px 0 0;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -93,121 +132,140 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
+            background: rgba(0,0,0,0.5);
+            overflow: auto;
+            padding: 10px;
         }
+
         .modal-content {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             text-align: center;
-            min-width: 300px;
+            width: 90%;
+            max-width: 400px;
+            margin: 15% auto;
             position: relative;
         }
+
         .close {
             position: absolute;
-            top: 10px;
-            right: 15px;
+            top: 5px;
+            right: 10px;
             font-size: 24px;
             cursor: pointer;
             color: #333;
             transition: color 0.2s;
         }
+
         .close:hover { color: #ff0000; }
+
         .hidden { display: none; }
+
         .auth-container {
-            padding: 20px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
+
         .auth-input {
-            padding: 10px;
-            margin: 10px 0;
+            padding: 8px;
+            margin: 8px 0;
             border: 2px solid #83E8BA;
             border-radius: 5px;
-            font-size: 16px;
-            width: 80%;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 300px;
         }
-        .code-display {
-            font-size: 18px;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 5px;
-            margin: 10px 0;
-            word-wrap: break-word;
-            user-select: text;
-        }
+
         .footer-text {
             text-align: center;
-            font-size: 14px;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: #333;
-            padding: 10px;
+            padding: 5px;
             position: fixed;
             bottom: 0;
-            width: 100%;
+            left: 0;
+            right: 0;
             background: rgba(255, 255, 255, 0.7);
+            z-index: 5;
         }
+
         .pear-fall {
             position: absolute;
-            font-size: 30px;
+            font-size: clamp(20px, 5vw, 30px);
             z-index: 500;
             animation: fall 2s linear forwards;
+            pointer-events: none;
         }
+
         @keyframes fall {
             from { top: -50px; opacity: 1; }
-            to { top: 100%; opacity: 0; }
+            to { top: calc(100vh + 50px); opacity: 0; }
         }
+
         .achievements {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin: 20px 0;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 15px 0;
         }
+
         .achievement-item {
             margin: 5px 0;
             padding: 5px;
             background: #83E8BA;
             border-radius: 5px;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
         }
-        .warning-text {
-            color: #ff4444;
-            font-size: 14px;
-            margin: 10px 0;
-        }
+
         #pest {
             position: fixed;
-            font-size: 50px;
+            font-size: clamp(30px, 10vw, 50px);
             z-index: 500;
             animation: run 5s linear forwards;
             top: 40px;
+            pointer-events: none;
         }
+
         @keyframes run {
             0% { left: -10%; }
             100% { left: 110%; }
         }
+
         @media (max-width: 600px) {
-            .pear-btn { font-size: 100px; }
-            .container { padding: 10px; }
-            .score-board { padding: 10px; }
-            .shop-item { padding: 10px; }
+            .container { padding: 5px; }
+            .score-board { 
+                padding: 8px;
+                gap: 5px;
+                position: relative;
+            }
+            .powerups { 
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            .modal-content {
+                margin: 10% auto;
+                padding: 10px;
+            }
+        }
+
+        @media (hover: none) {
+            .auth-btn:hover { transform: none; }
+            .shop-item:hover { transform: none; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="score-board">
-            <h1>
-                <img src="" alt="Логотип" class="logo" id="logo">
-                Груш: <span id="score">0</span>
-            </h1>
+            <h1>Груш: <span id="score">0</span></h1>
             <p>🚀 Автогруш/сек: <span id="autoClickers">0</span></p>
             <button class="auth-btn" onclick="showAuthModal()">Аккаунт</button>
             <span id="userStatus"></span>
         </div>
-        <div class="text-center" style="text-align:center;">
+        <div style="text-align:center;">
             <div id="pear" class="pear-btn">🍐</div>
             <p>Кликай быстрее!</p>
         </div>
@@ -246,28 +304,35 @@
     </div>
     <div id="modal" class="modal">
         <div class="modal-content">
+            <span class="close" onclick="closeModal()">×</span>
             <div id="modalBody"></div>
         </div>
     </div>
-    <div class="footer-text">Весь прогресс хранится в браузере, не потеряйте его</div>
+    <div class="footer-text">Весь прогресс хранится в браузере</div>
 
     <script>
-        let score = 0, autoClickers = 0, autoClickerCost = 50, multiplierActive = false;
-        let clickTimes = [], clickIntervals = [], isCaptchaActive = false;
-        let currentUser = null, pestActive = false, pestSlayerAchieved = false;
-        let pestElem = null;
+        // Объявление переменных
+        let score = 0,
+            autoClickers = 0,
+            autoClickerCost = 50,
+            multiplierActive = false,
+            clickTimes = [],
+            clickIntervals = [],
+            isCaptchaActive = false,
+            currentUser = null,
+            pestActive = false,
+            pestSlayerAchieved = false,
+            pestElem = null;
 
+        // DOM элементы
         const modal = document.getElementById('modal'),
               modalBody = document.getElementById('modalBody'),
               achievementList = document.getElementById('achievementList'),
-              pearElem = document.getElementById('pear'),
-              logoElem = document.getElementById('logo');
+              pearBtn = document.getElementById('pear');
 
-        logoElem.src = LOGO_URL;
-
+        // Константы
         const bannedNames = ["ultimate coder"];
         const bannedWords = ["fuck", "shit", "bitch", "хуй", "пизда", "сука"];
-
         const achievements = [
             { id: 'first100', name: 'Новичок 🥳', condition: () => score >= 100, completed: false },
             { id: 'auto10', name: 'Автоматизатор 🤖', condition: () => autoClickers >= 10, completed: false },
@@ -276,82 +341,89 @@
             { id: 'pestSlayer', name: 'Убийца вредителей 🐛', condition: () => pestSlayerAchieved, completed: false }
         ];
 
+        // Основные функции
         function updateUserStatus() {
-            const userStatus = document.getElementById('userStatus');
-            userStatus.textContent = currentUser ? "Вы вошли как: " + currentUser : "";
+            document.getElementById('userStatus').textContent = 
+                currentUser ? `Вы вошли как: ${currentUser}` : '';
         }
 
         function saveProgress() {
-            if (currentUser) {
-                const progress = { 
-                    score, 
-                    autoClickers, 
-                    autoClickerCost, 
-                    multiplierActive, 
-                    achievements: achievements.map(a => a.completed)
-                };
-                let accountDataStr = localStorage.getItem('gameAccount_' + currentUser);
-                if (accountDataStr) {
-                    let accountData = JSON.parse(accountDataStr);
-                    accountData.progress = progress;
-                    localStorage.setItem('gameAccount_' + currentUser, JSON.stringify(accountData));
-                }
+            if (!currentUser) return;
+            const progress = {
+                score,
+                autoClickers,
+                autoClickerCost,
+                multiplierActive,
+                achievements: achievements.map(a => a.completed)
+            };
+            const accountDataStr = localStorage.getItem(`gameAccount_${currentUser}`);
+            if (accountDataStr) {
+                const accountData = JSON.parse(accountDataStr);
+                accountData.progress = progress;
+                localStorage.setItem(`gameAccount_${currentUser}`, JSON.stringify(accountData));
             }
         }
 
         function updateDisplay() {
-            document.getElementById('score').textContent = currentUser === "creatorucgame" ? "∞" : Math.floor(score);
-            document.getElementById('autoClickers').textContent = currentUser === "creatorucgame" ? "∞" : autoClickers;
+            const isCreator = currentUser === "creatorucgame";
+            document.getElementById('score').textContent = isCreator ? "∞" : Math.floor(score);
+            document.getElementById('autoClickers').textContent = isCreator ? "∞" : autoClickers;
             document.getElementById('autoClickerCost').textContent = autoClickerCost;
-            document.getElementById('autoClickerCount').textContent = currentUser === "creatorucgame" ? "∞" : autoClickers;
-            if (score >= 100 || currentUser === "creatorucgame") document.getElementById('finishGameBtn').classList.remove('hidden');
+            document.getElementById('autoClickerCount').textContent = isCreator ? "∞" : autoClickers;
+            document.getElementById('finishGameBtn').classList.toggle('hidden', !(score >= 100 || isCreator));
             checkAchievements();
             updateUserStatus();
-            if(currentUser && currentUser !== "creatorucgame") saveProgress();
+            if (currentUser && !isCreator) saveProgress();
         }
 
         function clickPear(event) {
             if (isCaptchaActive) return;
             const now = Date.now();
             clickTimes.push(now);
-            if (clickTimes.length > 1)
-                clickIntervals.push(clickTimes[clickTimes.length - 1] - clickTimes[clickTimes.length - 2]);
+            if (clickTimes.length > 1) {
+                clickIntervals.push(now - clickTimes[clickTimes.length - 2]);
+            }
+
             clickTimes = clickTimes.filter(time => now - time < 20000);
-            clickIntervals = clickIntervals.filter((_, i) => i >= clickIntervals.length - 40);
-            
+            clickIntervals = clickIntervals.slice(-40);
+
             if (currentUser !== "creatorucgame") {
                 score += multiplierActive ? 2 : 1;
             }
             updateDisplay();
-            if (clickTimes.length > 200) showCaptcha("Слишком быстрая скорость кликов!");
-            if (checkConsistentIntervals()) showCaptcha("Обнаружены подозрительно ровные клики!");
+
+            if (clickTimes.length > 200) {
+                showCaptcha("Слишком быстрая скорость кликов!");
+            } else if (checkConsistentIntervals()) {
+                showCaptcha("Обнаружены подозрительно ровные клики!");
+            }
         }
 
         function checkConsistentIntervals() {
             if (clickIntervals.length < 40) return false;
             const avg = clickIntervals.reduce((a, b) => a + b, 0) / clickIntervals.length;
-            return clickIntervals.every(i => Math.abs(i - avg) < 10) &&
+            return clickIntervals.every(i => Math.abs(i - avg) < 10) && 
                    (clickTimes[clickTimes.length - 1] - clickTimes[0] >= 20000);
         }
 
+        // Покупки
         function buyAutoClicker() {
-            if (currentUser === "creatorucgame") return; // Ничего не делаем, уже бесконечно
-            if (score >= autoClickerCost) {
-                score -= autoClickerCost;
-                autoClickers++;
-                autoClickerCost = Math.floor(autoClickerCost * 1.15);
-                updateDisplay();
-            }
+            if (currentUser === "creatorucgame" || score < autoClickerCost) return;
+            score -= autoClickerCost;
+            autoClickers++;
+            autoClickerCost = Math.floor(autoClickerCost * 1.15);
+            updateDisplay();
         }
 
         function buyMultiplier() {
-            if (currentUser === "creatorucgame") return; // Ничего не делаем
-            if (score >= 200 && !multiplierActive) {
-                score -= 200;
-                multiplierActive = true;
-                setTimeout(() => { multiplierActive = false; updateDisplay(); }, 30000);
+            if (currentUser === "creatorucgame" || score < 200 || multiplierActive) return;
+            score -= 200;
+            multiplierActive = true;
+            updateDisplay();
+            setTimeout(() => {
+                multiplierActive = false;
                 updateDisplay();
-            }
+            }, 30000);
         }
 
         function removePest() {
@@ -359,30 +431,32 @@
                 alert("Нет активного вредителя!");
                 return;
             }
-            if (currentUser === "creatorucgame" || score >= 5000) {
-                if (currentUser !== "creatorucgame") score -= 5000;
+            const isCreator = currentUser === "creatorucgame";
+            if (isCreator || score >= 5000) {
+                if (!isCreator) score -= 5000;
                 pestActive = false;
                 removePestElement();
                 pestSlayerAchieved = true;
                 updateDisplay();
-                checkAchievements();
                 alert("Вредитель уничтожён!");
             } else {
-                alert("Недостаточно груш для удаления вредителя!");
+                alert("Недостаточно груш!");
             }
         }
 
         function finishGame() {
             const finishCost = 1000000000;
-            if (currentUser === "creatorucgame" || score >= finishCost) { 
-                if (currentUser !== "creatorucgame") score -= finishCost; 
-                updateDisplay(); 
-                window.location.href = "https://sites.google.com/view/grushauc/finish1"; 
+            const isCreator = currentUser === "creatorucgame";
+            if (isCreator || score >= finishCost) {
+                if (!isCreator) score -= finishCost;
+                updateDisplay();
+                window.location.href = "https://sites.google.com/view/grushauc/finish1";
             } else {
-                alert("Недостаточно груш для завершения игры!");
+                alert("Недостаточно груш!");
             }
         }
 
+        // Капча
         function showCaptcha(message) {
             isCaptchaActive = true;
             modalBody.innerHTML = `
@@ -401,51 +475,47 @@
             modalBody.innerHTML = `
                 <div class="auth-container">
                     <h2>Проверка на робота</h2>
-                    <p>Решите пример: ${num1} + ${num2} = ?</p>
-                    <input type="text" id="captcha-answer" class="auth-input" placeholder="Ваш ответ">
+                    <p>Решите: ${num1} + ${num2} = ?</p>
+                    <input type="number" id="captcha-answer" class="auth-input" placeholder="Ответ">
                     <button class="auth-btn" onclick="checkCaptcha(${correct})">Проверить</button>
                 </div>`;
         }
 
         function checkCaptcha(correct) {
-            if (parseInt(document.getElementById('captcha-answer').value) === correct) {
+            const answer = parseInt(document.getElementById('captcha-answer').value);
+            if (answer === correct) {
                 isCaptchaActive = false;
                 clickTimes = [];
                 clickIntervals = [];
                 modal.style.display = 'none';
             } else {
-                alert("Неправильный ответ. Попробуйте ещё раз.");
+                alert("Неправильно. Попробуйте ещё раз.");
             }
         }
 
+        // Авторизация
         function showAuthModal() {
-            if(currentUser) {
-                modalBody.innerHTML = `
-                    <span class="close" onclick="closeModal()">×</span>
-                    <div class="auth-container">
-                        <h2>Информация об аккаунте</h2>
-                        <p>Вы вошли как: ${currentUser}</p>
-                        <button class="auth-btn" onclick="logoutUser()">Выйти</button>
-                        <button class="auth-btn" onclick="closeModal()">Закрыть</button>
-                    </div>`;
-            } else {
-                modalBody.innerHTML = `
-                    <span class="close" onclick="closeModal()">×</span>
-                    <div class="auth-container">
-                        <h2>Войти или Зарегистрироваться</h2>
-                        <div>
-                            <button class="auth-btn" onclick="showLoginForm()">Войти</button>
-                            <button class="auth-btn" onclick="showRegisterForm()">Регистрация</button>
-                        </div>
-                        <div id="authFormContainer"></div>
-                    </div>`;
-            }
+            modalBody.innerHTML = currentUser ? `
+                <div class="auth-container">
+                    <h2>Аккаунт</h2>
+                    <p>Вы вошли как: ${currentUser}</p>
+                    <button class="auth-btn" onclick="logoutUser()">Выйти</button>
+                    <button class="auth-btn" onclick="closeModal()">Закрыть</button>
+                </div>
+            ` : `
+                <div class="auth-container">
+                    <h2>Войти или Зарегистрироваться</h2>
+                    <button class="auth-btn" onclick="showLoginForm()">Войти</button>
+                    <button class="auth-btn" onclick="showRegisterForm()">Регистрация</button>
+                    <div id="authFormContainer"></div>
+                </div>
+            `;
             modal.style.display = 'flex';
         }
 
         function showLoginForm() {
             document.getElementById('authFormContainer').innerHTML = `
-                <input type="text" id="login-username" class="auth-input" placeholder="Имя пользователя">
+                <input type="text" id="login-username" class="auth-input" placeholder="Имя">
                 <input type="password" id="login-password" class="auth-input" placeholder="Пароль">
                 <button class="auth-btn" onclick="processLogin()">Войти</button>
             `;
@@ -453,9 +523,9 @@
 
         function showRegisterForm() {
             document.getElementById('authFormContainer').innerHTML = `
-                <input type="text" id="register-username" class="auth-input" placeholder="Имя пользователя">
+                <input type="text" id="register-username" class="auth-input" placeholder="Имя">
                 <input type="password" id="register-password" class="auth-input" placeholder="Пароль">
-                <input type="password" id="register-password-confirm" class="auth-input" placeholder="Подтвердите пароль">
+                <input type="password" id="register-password-confirm" class="auth-input" placeholder="Подтвердите">
                 <button class="auth-btn" onclick="processRegistration()">Зарегистрироваться</button>
             `;
         }
@@ -464,40 +534,24 @@
             const username = document.getElementById('register-username').value.trim();
             const password = document.getElementById('register-password').value;
             const passwordConfirm = document.getElementById('register-password-confirm').value;
-            if(!username || !password) {
-                alert("Введите имя пользователя и пароль!");
-                return;
-            }
-            if(bannedNames.includes(username.toLowerCase())) {
-                alert("Это имя пользователя недопустимо!");
-                return;
-            }
-            for (let word of bannedWords) {
-                if (username.toLowerCase().includes(word)) {
-                    alert("Имя пользователя содержит недопустимые слова!");
-                    return;
-                }
-            }
-            if(password !== passwordConfirm) {
-                alert("Пароли не совпадают!");
-                return;
-            }
-            if(localStorage.getItem('gameAccount_' + username)) {
-                alert("Пользователь с таким именем уже существует!");
-                return;
-            }
+
+            if (!username || !password) return alert("Заполните все поля!");
+            if (bannedNames.includes(username.toLowerCase())) return alert("Имя недопустимо!");
+            if (bannedWords.some(word => username.toLowerCase().includes(word))) return alert("Недопустимые слова!");
+            if (password !== passwordConfirm) return alert("Пароли не совпадают!");
+            if (localStorage.getItem(`gameAccount_${username}`)) return alert("Пользователь уже существует!");
+
             const initialProgress = {
                 score: 0,
                 autoClickers: 0,
                 autoClickerCost: 50,
                 multiplierActive: false,
-                achievements: achievements.map(a => false)
+                achievements: achievements.map(() => false)
             };
-            const accountData = { username, password, progress: initialProgress };
-            localStorage.setItem('gameAccount_' + username, JSON.stringify(accountData));
+            localStorage.setItem(`gameAccount_${username}`, JSON.stringify({ username, password, progress: initialProgress }));
             currentUser = username;
             localStorage.setItem('gameCurrentUser', username);
-            alert("Регистрация успешна! Вы вошли как " + username);
+            alert(`Регистрация успешна! Привет, ${username}`);
             closeModal();
             updateUserStatus();
         }
@@ -505,20 +559,14 @@
         function processLogin() {
             const username = document.getElementById('login-username').value.trim();
             const password = document.getElementById('login-password').value;
-            if(!username || !password) {
-                alert("Введите имя пользователя и пароль!");
-                return;
-            }
-            let accountDataStr = localStorage.getItem('gameAccount_' + username);
-            if(!accountDataStr) {
-                alert("Пользователь не найден!");
-                return;
-            }
-            let accountData = JSON.parse(accountDataStr);
-            if(accountData.password !== password) {
-                alert("Неверный пароль!");
-                return;
-            }
+            const accountDataStr = localStorage.getItem(`gameAccount_${username}`);
+
+            if (!username || !password) return alert("Заполните все поля!");
+            if (!accountDataStr) return alert("Пользователь не найден!");
+
+            const accountData = JSON.parse(accountDataStr);
+            if (accountData.password !== password) return alert("Неверный пароль!");
+
             currentUser = username;
             localStorage.setItem('gameCurrentUser', username);
 
@@ -527,18 +575,17 @@
                 autoClickers = Infinity;
                 achievements.forEach(a => a.completed = true);
             } else {
-                const progress = accountData.progress;
+                const { progress } = accountData;
                 score = progress.score;
                 autoClickers = progress.autoClickers;
                 autoClickerCost = progress.autoClickerCost;
                 multiplierActive = progress.multiplierActive;
-                achievements.forEach((a, index) => a.completed = progress.achievements[index]);
+                achievements.forEach((a, i) => a.completed = progress.achievements[i]);
             }
             updateDisplay();
             updateAchievementsDisplay();
-            alert("Вход выполнен успешно! Привет, " + username);
+            alert(`Привет, ${username}!`);
             closeModal();
-            updateUserStatus();
         }
 
         function logoutUser() {
@@ -547,22 +594,26 @@
             alert("Вы вышли из аккаунта.");
             closeModal();
             updateUserStatus();
+            location.reload();
         }
 
-        function closeModal() { modal.style.display = 'none'; }
+        function closeModal() {
+            modal.style.display = 'none';
+        }
 
+        // Достижения
         function checkAchievements() {
-            achievements.forEach(a => { 
-                if (!a.completed && a.condition()) { 
-                    a.completed = true; 
-                    spawnFallingPears(); 
-                } 
+            achievements.forEach(a => {
+                if (!a.completed && a.condition()) {
+                    a.completed = true;
+                    spawnFallingPears();
+                }
             });
             updateAchievementsDisplay();
         }
 
         function spawnFallingPears() {
-            for (let i = 1; i < 15; i++) {
+            for (let i = 0; i < 15; i++) {
                 const pear = document.createElement('div');
                 pear.className = 'pear-fall';
                 pear.textContent = '🍐';
@@ -573,27 +624,22 @@
         }
 
         function updateAchievementsDisplay() {
-            achievementList.innerHTML = '';
-            achievements.forEach(a => {
-                if (a.completed) {
-                    const div = document.createElement('div');
-                    div.className = 'achievement-item';
-                    div.textContent = a.name;
-                    achievementList.appendChild(div);
-                }
-            });
+            achievementList.innerHTML = achievements
+                .filter(a => a.completed)
+                .map(a => `<div class="achievement-item">${a.name}</div>`)
+                .join('');
         }
-        
 
+        // Вредитель
         function spawnPest() {
-            if (pestActive || currentUser === "creatorucgame") return; // Вредитель не появляется для creatorucgame
+            if (pestActive || currentUser === "creatorucgame") return;
             pestActive = true;
             pestElem = document.createElement('div');
             pestElem.id = 'pest';
             pestElem.textContent = '🐛';
             document.body.appendChild(pestElem);
 
-            let pestInterval = setInterval(() => {
+            const pestInterval = setInterval(() => {
                 if (!pestActive || !pestElem) {
                     clearInterval(pestInterval);
                     return;
@@ -619,50 +665,58 @@
         }
 
         function removePestElement() {
-            if (pestElem) pestElem.remove();
-            pestElem = null;
-        }
-
-        function scheduleNextPest() {
-            const nextTime = Math.floor(Math.random() * 20000) + 10000;
-            setTimeout(spawnPest, nextTime);
-        }
-
-        function autoLogin() {
-            const savedUser = localStorage.getItem('gameCurrentUser');
-            if (savedUser) {
-                currentUser = savedUser;
-                let accountDataStr = localStorage.getItem('gameAccount_' + currentUser);
-                if (accountDataStr) {
-                    let accountData = JSON.parse(accountDataStr);
-                    if (currentUser === "creatorucgame" && accountData.password === "123") {
-                        score = Infinity;
-                        autoClickers = Infinity;
-                        achievements.forEach(a => a.completed = true);
-                    } else {
-                        const progress = accountData.progress;
-                        score = progress.score;
-                        autoClickers = progress.autoClickers;
-                        autoClickerCost = progress.autoClickerCost;
-                        multiplierActive = progress.multiplierActive;
-                        achievements.forEach((a, index) => a.completed = progress.achievements[index]);
-                    }
-                }
-                updateDisplay();
-                updateAchievementsDisplay();
-                updateUserStatus();
+            if (pestElem) {
+                pestElem.remove();
+                pestElem = null;
             }
         }
 
-        setInterval(() => { 
-            if (currentUser !== "creatorucgame") score += autoClickers; 
-            updateDisplay(); 
+        function scheduleNextPest() {
+            setTimeout(spawnPest, Math.floor(Math.random() * 20000) + 10000);
+        }
+
+        // Автозагрузка
+        function autoLogin() {
+            const savedUser = localStorage.getItem('gameCurrentUser');
+            if (!savedUser) return;
+            
+            currentUser = savedUser;
+            const accountDataStr = localStorage.getItem(`gameAccount_${currentUser}`);
+            if (!accountDataStr) return;
+
+            const accountData = JSON.parse(accountDataStr);
+            if (currentUser === "creatorucgame" && accountData.password === "123") {
+                score = Infinity;
+                autoClickers = Infinity;
+                achievements.forEach(a => a.completed = true);
+            } else {
+                const { progress } = accountData;
+                score = progress.score;
+                autoClickers = progress.autoClickers;
+                autoClickerCost = progress.autoClickerCost;
+                multiplierActive = progress.multiplierActive;
+                achievements.forEach((a, i) => a.completed = progress.achievements[i]);
+            }
+            updateDisplay();
+            updateAchievementsDisplay();
+            updateUserStatus();
+        }
+
+        // Инициализация
+        setInterval(() => {
+            if (currentUser !== "creatorucgame") score += autoClickers;
+            updateDisplay();
         }, 1000);
+
+        pearBtn.addEventListener('click', clickPear);
+        pearBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            clickPear(e);
+        });
+
         scheduleNextPest();
-        pearElem.addEventListener('click', clickPear);
-        updateDisplay();
-        updateAchievementsDisplay();
         autoLogin();
+        updateDisplay();
     </script>
 </body>
 </html>
