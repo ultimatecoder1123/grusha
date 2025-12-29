@@ -2,690 +2,774 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>🍐 Идеальная Груша</title>
+    <title>Pear Clicker: Evolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script>
-        const LOGO_URL = "https://pngicon.ru/file/uploads/grusha.png";
-    </script>
+    <meta name="theme-color" content="#83E8BA">
     <style>
+        :root {
+            --primary: #83E8BA;
+            --secondary: #FFE27D;
+            --accent: #FF6B6B;
+            --dark: #2C3E50;
+            --light: #FFFFFF;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            background: linear-gradient(-45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite, fadeIn 1s ease-in;
             user-select: none;
             -webkit-user-select: none;
-            overflow-x: hidden;
+        }
+
+        body {
             margin: 0;
-            padding: 0 0 80px;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 15px;
-        }
-
-        .progress-bar {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            margin-bottom: 20px;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at center, #fdfbf7 0%, #ebf5f0 100%);
+            color: var(--dark);
+            height: 100vh;
+            overflow: hidden; /* Prevent scroll on mobile during frantic clicking */
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            flex-direction: column;
+        }
+
+        /* --- UI Layout --- */
+        .header {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px var(--shadow);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .progress-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: conic-gradient(#4ECDC4 var(--progress, 0%), #FFEAA7 var(--progress, 0%));
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .score-display {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #27ae60;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #333;
-            position: relative;
+            gap: 5px;
         }
 
-        .progress-circle::after {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .stats {
-            flex: 1;
-            min-width: 200px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .stat-item {
-            background: rgba(255,255,255,0.7);
-            padding: 8px 12px;
-            border-radius: 12px;
-            text-align: center;
+        .per-sec {
+            font-size: 0.9rem;
+            color: #7f8c8d;
             font-weight: 600;
         }
 
-        .main-pear {
-            font-size: clamp(120px, 30vw, 200px);
-            cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            animation: bounce 2s infinite;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
-            display: block;
-            margin: 30px auto;
+        .game-area {
+            flex: 1;
             position: relative;
-            z-index: 10;
-        }
-
-        .main-pear:active {
-            transform: scale(0.85) rotate(5deg);
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4));
-        }
-
-        .main-pear.multiplier-active {
-            animation: pulse 0.5s infinite;
-            filter: drop-shadow(0 15px 30px #4ECDC4);
-        }
-
-        .upgrades-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .upgrade-card {
-            background: rgba(255,255,255,0.95);
-            padding: 20px;
-            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            transition: all 0.3s ease;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        /* --- The Pear --- */
+        .pear-container {
+            position: relative;
             cursor: pointer;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5;
+        }
+
+        .pear-btn {
+            font-size: clamp(120px, 25vw, 180px);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            will-change: transform;
+        }
+
+        .pear-container:active {
+            transform: scale(0.9);
+        }
+
+        /* --- Combo Meter --- */
+        .combo-container {
+            position: absolute;
+            top: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-align: center;
+        }
+        .combo-active { opacity: 1; }
+        .combo-text { font-size: 1.5rem; font-weight: 900; color: var(--accent); transform: rotate(-5deg); }
+        .combo-bar {
+            width: 150px;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .combo-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* --- Shop & UI --- */
+        .bottom-panel {
+            height: 40vh;
+            background: white;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            transition: transform 0.3s ease;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 10px 20px;
+            gap: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: #1e5c36;
+            transform: translateY(-2px);
+        }
+
+        .shop-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .shop-item {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
         }
 
-        .upgrade-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        .shop-item.affordable {
+            border-color: var(--primary);
+            cursor: pointer;
+            background: linear-gradient(to right, #ffffff, #f0fff4);
         }
 
-        .upgrade-card:active {
+        .shop-item.affordable:active {
             transform: scale(0.98);
         }
 
-        .upgrade-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .upgrade-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin: 0 0 5px;
-        }
-
-        .upgrade-cost {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #FF6B6B;
-            margin: 5px 0;
-        }
-
-        .upgrade-owned {
-            background: linear-gradient(45deg, #4ECDC4, #45B7D1);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-top: 5px;
-        }
-
-        .boost-timer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #FF6B6B;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .events {
-            background: rgba(255,255,255,0.9);
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .achievement-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(45deg, #4ECDC4, #45B7D1);
-            color: white;
-            padding: 30px;
-            border-radius: 25px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            z-index: 1000;
-            animation: achievementPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 90vw;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        @keyframes achievementPop {
-            0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); opacity: 0; }
-            50% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 25px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            position: relative;
-            animation: modalSlide 0.3s ease;
-        }
-
-        @keyframes modalSlide { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .final-boss {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: clamp(100px, 25vw, 200px);
-            z-index: 1500;
-            animation: bossShake 0.5s infinite;
+        .shop-item.locked {
+            opacity: 0.6;
+            filter: grayscale(1);
             pointer-events: none;
         }
 
-        @keyframes bossShake { 0%, 100% { transform: translateX(-50%) rotate(0deg); } 25% { transform: translateX(-50%) rotate(-2deg); } 75% { transform: translateX(-50%) rotate(2deg); } }
+        .item-icon { font-size: 2rem; margin-right: 15px; }
+        .item-details { flex: 1; }
+        .item-name { font-weight: 700; font-size: 1rem; }
+        .item-cost { color: #e67e22; font-weight: 600; font-size: 0.9rem; }
+        .item-bonus { color: #27ae60; font-size: 0.8rem; }
+        .item-count {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ecf0f1;
+            background: #bdc3c7;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .affordable .item-count { background: var(--primary); color: #0f3d22; }
 
-        .footer {
-            text-align: center;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
-            color: rgba(255,255,255,0.9);
-            padding: 15px;
+        /* --- Particles & Effects --- */
+        .click-particle {
+            position: absolute;
+            pointer-events: none;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #27ae60;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 100;
+            text-shadow: 1px 1px 0 #fff;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+
+        /* --- Golden Pear --- */
+        .golden-pear {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            z-index: 50;
+            font-size: 60px;
+            z-index: 1000;
+            cursor: pointer;
+            animation: spin 1s infinite linear;
+            filter: drop-shadow(0 0 10px gold);
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Win Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.visible .modal-card { transform: translateY(0); }
+        .win-btn {
+            background: var(--primary);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
         }
 
-        @media (max-width: 600px) {
-            .container { padding: 10px; }
-            .progress-bar { flex-direction: column; text-align: center; gap: 10px; }
-            .stats { grid-template-columns: 1fr; min-width: auto; }
-            .upgrades-grid { grid-template-columns: 1fr; gap: 12px; }
+        /* --- Achievements Popups --- */
+        .achievements-container {
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
         }
+        .achievement-toast {
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .achievement-icon { font-size: 1.5rem; }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="progress-bar">
-            <div class="progress-circle" style="--progress: 0%"></div>
-            <div class="stats">
-                <div class="stat-item">🍐 Груш: <span id="score">0</span></div>
-                <div class="stat-item">🤖 Авто: <span id="autoClickers">0</span>/сек</div>
-                <div class="stat-item">⚡ Множитель: <span id="multiplier">1x</span></div>
-                <div class="stat-item">🎯 До босса: <span id="bossProgress">1M</span></div>
-            </div>
-            <button class="auth-btn" onclick="showAuthModal()" style="
-                padding: 12px 20px; background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-                border: none; border-radius: 25px; color: white; font-weight: bold;
-                cursor: pointer; transition: all 0.3s; font-size: 1rem;">
-                👤 <span id="userStatus"></span>
-            </button>
+
+    <div class="header">
+        <div class="stats-container">
+            <div class="score-display">🍐 <span id="score">0</span></div>
+            <div class="per-sec">⚡ <span id="pps">0</span> / сек</div>
+        </div>
+        <button id="menuBtn" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">⚙️</button>
+    </div>
+
+    <div class="achievements-container" id="achievementsContainer"></div>
+
+    <div class="game-area">
+        <div class="combo-container" id="comboContainer">
+            <div class="combo-text" id="comboText">x1.0 COMBO!</div>
+            <div class="combo-bar"><div class="combo-fill" id="comboFill"></div></div>
         </div>
 
-        <div style="text-align: center; margin-bottom: 30px;">
-            <div id="pear" class="main-pear">🍐</div>
-            <h2 style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin: 10px 0;">Кликай на главную грушу!</h2>
-        </div>
-
-        <div class="upgrades-grid">
-            <div class="upgrade-card" onclick="buyUpgrade('auto')">
-                <div class="upgrade-icon">🤖</div>
-                <div class="upgrade-title">Автогруш</div>
-                <div class="upgrade-cost" id="autoCost">15</div>
-                <div class="upgrade-owned" id="autoOwned">0</div>
-            </div>
-            <div class="upgrade-card" onclick="buyUpgrade('multi')">
-                <div class="upgrade-icon">⚡</div>
-                <div class="upgrade-title">Мега-клик (20c)</div>
-                <div class="upgrade-cost" id="multiCost">75</div>
-                <div class="upgrade-owned" id="multiOwned">Готов</div>
-            </div>
-            <div class="upgrade-card" onclick="buyUpgrade('super')">
-                <div class="upgrade-icon">⭐</div>
-                <div class="upgrade-title">Супер-клик</div>
-                <div class="upgrade-cost" id="superCost">500</div>
-                <div class="upgrade-owned" id="superOwned">0</div>
-            </div>
-            <div class="upgrade-card" onclick="buyUpgrade('boss')">
-                <div class="upgrade-icon">👹</div>
-                <div class="upgrade-title">Босс!</div>
-                <div class="upgrade-cost" id="bossCost">1,000,000</div>
-                <div class="upgrade-owned" id="bossOwned">ПОБЕДИ</div>
-            </div>
-        </div>
-
-        <div class="events">
-            <h3 style="margin: 0 0 15px; color: #333;">🎉 Достижения</h3>
-            <div id="achievements" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;"></div>
+        <div class="pear-container" id="bigPear">
+            <div class="pear-btn">🍐</div>
         </div>
     </div>
 
-    <div id="modal" class="modal"></div>
-    <div id="achievementPopup" class="achievement-popup" style="display: none;"></div>
-    <div class="footer">⚡ Прогресс сохраняется автоматически | За 25 минут до победы! 🍐</div>
-
-    <script>
-        // ИГРОВЫЕ ПЕРЕМЕННЫЕ
-        let game = {
-            score: 0,
-            autoClickers: 0, autoCost: 15,
-            multiplierActive: false, multiplierEnd: 0,
-            superClicks: 0, superCost: 500,
-            bossActive: false, bossHealth: 0,
-            achievements: {},
-            combos: 0, lastClick: 0,
-            currentUser: localStorage.getItem('grushaUser') || null
-        };
-
-        // ДОСТИЖЕНИЯ (прогрессивная система)
-        const ACHIEVEMENTS = {
-            newbie: { name: '🥳 Первый вкус', goal: 50, current: 0 },
-            farmer: { name: '🌱 Грушевый фермер', goal: 500, current: 0 },
-            master: { name: '🍐 Мастер груш', goal: 5000, current: 0 },
-            auto: { name: '🤖 Автоматизация', goal: 10, current: 0 },
-            combo: { name: '💥 Комбо-мастер', goal: 50, current: 0 },
-            super: { name: '⭐ Супергерой', goal: 5, current: 0 },
-            millionaire: { name: '💰 Миллионер', goal: 1000000, current: 0 },
-            boss: { name: '👹 Победитель!', goal: 1, current: 0 }
-        };
-
-        // DOM ЭЛЕМЕНТЫ
-        const els = {
-            score: document.getElementById('score'),
-            autoClickers: document.getElementById('autoClickers'),
-            multiplier: document.getElementById('multiplier'),
-            bossProgress: document.getElementById('bossProgress'),
-            pear: document.getElementById('pear'),
-            progressCircle: document.querySelector('.progress-circle'),
-            achievements: document.getElementById('achievements'),
-            userStatus: document.getElementById('userStatus')
-        };
-
-        // ИНИЦИАЛИЗАЦИЯ
-        function init() {
-            loadGame();
-            updateDisplay();
-            autoSaveInterval = setInterval(autoSave, 5000);
-            gameLoop();
-            if (game.currentUser) updateUserStatus();
-        }
-
-        // ОСНОВНОЙ ЦИКЛ
-        function gameLoop() {
-            const now = Date.now();
-            
-            // Автоклики
-            game.score += game.autoClickers * 0.016; // 60 FPS
-            
-            // Множитель
-            if (game.multiplierActive && now > game.multiplierEnd) {
-                game.multiplierActive = false;
-            }
-            
-            // Босс логика
-            if (game.bossActive && game.bossHealth > 0) {
-                game.bossHealth -= 0.1; // Постепенное снижение
-                if (game.bossHealth <= 0) defeatBoss();
-            }
-            
-            updateDisplay();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // КЛИК ПО ГРУШЕ
-        function clickPear() {
-            const now = Date.now();
-            const clickPower = game.multiplierActive ? 5 : (game.superClicks >= 1 ? 3 : 1);
-            
-            // Комбо система
-            if (now - game.lastClick < 200) {
-                game.combos++;
-            } else {
-                game.combos = 0;
-            }
-            game.lastClick = now;
-            
-            if (game.combos > 10) clickPower *= 1.5;
-            
-            game.score += clickPower;
-            
-            // Визуальный фидбек
-            els.pear.style.animation = 'shake 0.1s';
-            setTimeout(() => els.pear.style.animation = 'bounce 2s infinite', 100);
-            
-            // Проверка достижений
-            checkAchievements();
-            
-            if (!game.bossActive && game.score >= 1000000) {
-                spawnBoss();
-            }
-        }
-
-        // ПОКУПКИ
-        function buyUpgrade(type) {
-            const costs = {
-                auto: { cost: game.autoCost, count: game.autoClickers },
-                super: { cost: game.superCost, count: game.superClicks }
-            };
-            
-            const upgrade = costs[type];
-            if (!upgrade || game.score < upgrade.cost) {
-                shakeUpgrade(type);
-                return;
-            }
-            
-            game.score -= upgrade.cost;
-            
-            if (type === 'auto') {
-                game.autoClickers++;
-                game.autoCost = Math.floor(game.autoCost * 1.25);
-            } else if (type === 'super') {
-                game.superClicks++;
-                game.superCost = Math.floor(game.superCost * 2);
-            } else if (type === 'multi') {
-                activateMultiplier();
-            } else if (type === 'boss') {
-                if (game.score >= 1000000) spawnBoss();
-            }
-            
-            successVibration();
-            updateDisplay();
-        }
-
-        function activateMultiplier() {
-            if (game.score < 75 || game.multiplierActive) return;
-            game.score -= 75;
-            game.multiplierActive = true;
-            game.multiplierEnd = Date.now() + 20000;
-            els.pear.classList.add('multiplier-active');
-        }
-
-        function spawnBoss() {
-            game.bossActive = true;
-            game.bossHealth = 100;
-            const boss = document.createElement('div');
-            boss.id = 'boss';
-            boss.className = 'final-boss';
-            boss.textContent = '👹';
-            document.body.appendChild(boss);
-        }
-
-        function defeatBoss() {
-            showAchievement('boss');
-            game.bossActive = false;
-            document.getElementById('boss')?.remove();
-            confettiExplosion();
-            setTimeout(() => {
-                alert('🎉 ПОБЕДА! Ты прошёл игру за рекордное время! 🍐👑');
-                if (game.currentUser) {
-                    localStorage.setItem(`grushaWin_${game.currentUser}`, Date.now());
-                }
-            }, 1000);
-        }
-
-        // ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
-        function updateDisplay() {
-            els.score.textContent = formatNumber(game.score);
-            els.autoClickers.textContent = game.autoClickers;
-            els.multiplier.textContent = game.multiplierActive ? '5x' : '1x';
-            
-            const bossNeed = 1000000;
-            els.bossProgress.textContent = formatNumber(Math.max(0, bossNeed - game.score));
-            
-            // Прогресс круг
-            const progress = Math.min(100, (game.score / bossNeed) * 100);
-            els.progressCircle.style.setProperty('--progress', progress + '%');
-            
-            // Обновление цен
-            document.getElementById('autoCost').textContent = formatNumber(game.autoCost);
-            document.getElementById('superCost').textContent = formatNumber(game.superCost);
-            document.getElementById('bossCost').textContent = formatNumber(1000000);
-            
-            // Активные апгрейды
-            document.getElementById('autoOwned').textContent = game.autoClickers;
-            document.getElementById('superOwned').textContent = game.superClicks;
-            
-            // Проверка достижений
-            Object.keys(ACHIEVEMENTS).forEach(id => {
-                const ach = ACHIEVEMENTS[id];
-                if (ach.current < ach.goal) ach.current = Math.floor(game[id === 'auto' ? 'autoClickers' : 'score']);
-            });
-            
-            updateAchievementsDisplay();
-            updateUserStatus();
-        }
-
-        function updateAchievementsDisplay() {
-            els.achievements.innerHTML = Object.values(ACHIEVEMENTS).map(ach => `
-                <div style="
-                    background: ${ach.current >= ach.goal ? 'linear-gradient(45deg, #4ECDC4, #45B7D1)' : 'rgba(255,255,255,0.7)'};
-                    color: ${ach.current >= ach.goal ? 'white' : '#666'};
-                    padding: 12px;
-                    border-radius: 15px;
-                    font-weight: bold;
-                    text-align: center;
-                ">
-                    ${ach.name}<br>
-                    <small>${ach.current}/${ach.goal}</small>
+    <div class="bottom-panel">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('upgrades')">Магазин</div>
+            <div class="tab" onclick="switchTab('boosts')">Бусты</div>
+            <div class="tab" onclick="switchTab('stats')">Инфо</div>
+        </div>
+        
+        <div id="tab-upgrades" class="shop-content">
+            <!-- Generated via JS -->
+        </div>
+        <div id="tab-boosts" class="shop-content" style="display:none;">
+             <div class="shop-item affordable" onclick="Game.prestige()">
+                <div class="item-icon">👑</div>
+                <div class="item-details">
+                    <div class="item-name">Закончить Игру</div>
+                    <div class="item-cost">Цена: 1,000,000,000 🍐</div>
+                    <div class="item-bonus">Требуется для победы</div>
                 </div>
-            `).join('');
+            </div>
+             <div style="text-align:center; padding:20px; color:#777;">
+                 <p>Кликайте быстрее, ловите Золотые Груши!</p>
+             </div>
+        </div>
+        <div id="tab-stats" class="shop-content" style="display:none;">
+            <h3>Статистика</h3>
+            <p>Всего кликов: <span id="stat-clicks">0</span></p>
+            <p>Золотых груш поймано: <span id="stat-golden">0</span></p>
+            <p>Время в игре: <span id="stat-time">0</span> м.</p>
+            <button class="win-btn" style="background:#ff6b6b; margin-top:10px;" onclick="Game.resetSave()">Сброс прогресса</button>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal-overlay" id="winModal">
+        <div class="modal-card">
+            <h1 style="font-size:3rem; margin:0;">🍐👑</h1>
+            <h2>ВЫ - ГРУШЕВЫЙ МАГНАТ!</h2>
+            <p>Вы собрали 1 Миллиард груш и достигли просветления.</p>
+            <p>Время прохождения: <span id="finalTime"></span> мин.</p>
+            <button class="win-btn" onclick="location.reload()">Начать заново</button>
+        </div>
+    </div>
+
+<script>
+/**
+ * PEAR CLICKER: EVOLUTION
+ * Architecture:
+ * 1. State Management (Data)
+ * 2. Logic (Math, Ticks)
+ * 3. UI (Rendering, Effects)
+ */
+
+// --- CONFIGURATION ---
+const CONFIG = {
+    FPS: 30,
+    AUTOSAVE_INTERVAL: 10000, // 10 sec
+    COMBO_DECAY: 0.5, // per tick
+    COMBO_MAX: 4.0,
+    GOLDEN_PEAR_CHANCE: 0.005, // Chance per tick (approx once per minute)
+    WIN_CONDITION: 1000000000
+};
+
+// --- DATA DEFINITIONS ---
+const BUILDINGS = [
+    { id: 'cursor', name: 'Авто-Курсор', baseCost: 15, baseProd: 1, icon: '👆' },
+    { id: 'grandma', name: 'Бабуля', baseCost: 100, baseProd: 5, icon: '👵' },
+    { id: 'tree', name: 'Грушевое дерево', baseCost: 1100, baseProd: 32, icon: '🌳' },
+    { id: 'farm', name: 'Ферма', baseCost: 12000, baseProd: 140, icon: '🚜' },
+    { id: 'factory', name: 'Завод сока', baseCost: 130000, baseProd: 800, icon: '🏭' },
+    { id: 'bank', name: 'Грушебанк', baseCost: 1400000, baseProd: 4500, icon: '🏦' },
+    { id: 'temple', name: 'Храм Груши', baseCost: 20000000, baseProd: 18000, icon: '⛩️' },
+    { id: 'collider', name: 'Коллайдер', baseCost: 330000000, baseProd: 95000, icon: '⚛️' }
+];
+
+const ACHIEVEMENTS = [
+    { id: 'first_100', name: 'Начало пути', text: 'Собери 100 груш', check: (s) => s.score >= 100 },
+    { id: 'combo_king', name: 'Быстрые пальцы', text: 'Достигни комбо x4.0', check: (s) => s.combo >= 4.0 },
+    { id: 'rich', name: 'Миллионер', text: 'Собери 1,000,000 груш', check: (s) => s.score >= 1000000 },
+    { id: 'production', name: 'Индустриализация', text: '1000 груш в секунду', check: (s) => s.pps >= 1000 }
+];
+
+// --- GAME STATE ---
+const State = {
+    score: 0,
+    clickCount: 0,
+    goldenPearsCaught: 0,
+    startTime: Date.now(),
+    buildings: {}, // { id: count }
+    achievements: [], // list of unlocked ids
+    combo: 1.0,
+    comboTimer: 0, // 0 to 100
+    
+    // Derived stats
+    pps: 0, // Pears per second
+    cpc: 1, // Clicks per click
+};
+
+// Initialize buildings map
+BUILDINGS.forEach(b => State.buildings[b.id] = 0);
+
+// --- LOGIC ENGINE ---
+const Logic = {
+    calculatePPS: () => {
+        let pps = 0;
+        BUILDINGS.forEach(b => {
+            pps += (State.buildings[b.id] || 0) * b.baseProd;
+        });
+        State.pps = pps;
+        return pps;
+    },
+
+    calculateClickPower: () => {
+        // Base click is 1 + 5% of PPS
+        return 1 + (State.pps * 0.05);
+    },
+
+    getCost: (buildingId) => {
+        const b = BUILDINGS.find(x => x.id === buildingId);
+        const count = State.buildings[buildingId];
+        // Exponential cost curve: Base * 1.15^count
+        return Math.floor(b.baseCost * Math.pow(1.15, count));
+    },
+
+    buy: (buildingId) => {
+        const cost = Logic.getCost(buildingId);
+        if (State.score >= cost) {
+            State.score -= cost;
+            State.buildings[buildingId]++;
+            Logic.calculatePPS();
+            UI.renderShop();
+            UI.animatePurchase(buildingId);
+        }
+    },
+
+    click: (x, y) => {
+        State.clickCount++;
+        
+        // Combo logic
+        State.comboTimer = 100;
+        if (State.combo < CONFIG.COMBO_MAX) {
+            State.combo += 0.1;
+        } else {
+            State.combo = CONFIG.COMBO_MAX;
         }
 
-        // ДОСТИЖЕНИЯ
-        function checkAchievements() {
-            Object.entries(ACHIEVEMENTS).forEach(([id, ach]) => {
-                if (ach.current >= ach.goal && !localStorage.getItem(`ach_${id}_${game.currentUser || 'guest'}`)) {
-                    showAchievement(id);
-                    localStorage.setItem(`ach_${id}_${game.currentUser || 'guest'}`, 'true');
-                }
-            });
+        const power = Logic.calculateClickPower() * Math.floor(State.combo);
+        State.score += power;
+        
+        UI.createParticle(x, y, `+${Math.floor(power)}`);
+        UI.punchPear();
+        Logic.checkAchievements();
+    },
+
+    tick: () => {
+        // Passive income
+        if (State.pps > 0) {
+            State.score += State.pps / CONFIG.FPS;
         }
 
-        function showAchievement(id) {
-            const popup = document.getElementById('achievementPopup');
-            popup.textContent = ACHIEVEMENTS[id].name;
-            popup.style.display = 'block';
-            successVibration();
-            confettiExplosion();
-            setTimeout(() => popup.style.display = 'none', 3000);
+        // Combo decay
+        if (State.comboTimer > 0) {
+            State.comboTimer -= 2; // Decay speed
+        } else if (State.combo > 1.0) {
+            State.combo -= 0.05;
+            if (State.combo < 1.0) State.combo = 1.0;
         }
 
-        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
-        function confettiExplosion() {
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.textContent = '✨';
-                confetti.style.cssText = `
-                    position: fixed; left: ${Math.random()*100}vw; top: -10px;
-                    font-size: ${Math.random()*20+10}px; z-index: 10000;
-                    animation: fall ${Math.random()*3+2}s linear forwards;
-                    color: hsl(${Math.random()*360}, 70%, 60%);
-                `;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 5000);
+        // Golden Pear Spawn
+        if (Math.random() < CONFIG.GOLDEN_PEAR_CHANCE) {
+            UI.spawnGoldenPear();
+        }
+
+        Logic.checkAchievements();
+    },
+
+    checkAchievements: () => {
+        ACHIEVEMENTS.forEach(ach => {
+            if (!State.achievements.includes(ach.id) && ach.check(State)) {
+                State.achievements.push(ach.id);
+                UI.showToast(ach.icon || '🏆', ach.name);
             }
-        }
+        });
+    }
+};
 
-        function shakeUpgrade(type) {
-            const card = document.querySelector(`[onclick="buyUpgrade('${type}')"]`);
-            card.style.animation = 'shake 0.3s';
-            setTimeout(() => card.style.animation = '', 300);
-        }
+// --- UI ENGINE ---
+const UI = {
+    els: {
+        score: document.getElementById('score'),
+        pps: document.getElementById('pps'),
+        shop: document.getElementById('tab-upgrades'),
+        pear: document.getElementById('bigPear'),
+        combo: document.getElementById('comboContainer'),
+        comboText: document.getElementById('comboText'),
+        comboFill: document.getElementById('comboFill'),
+        achievements: document.getElementById('achievementsContainer')
+    },
 
-        function successVibration() {
-            if (navigator.vibrate) navigator.vibrate(50);
-        }
-
-        // УТИЛИТЫ
-        function formatNumber(num) {
-            if (num >= 1e6) return (num/1e6).toFixed(1) + 'M';
-            if (num >= 1e3) return (num/1e3).toFixed(1) + 'K';
-            return Math.floor(num).toLocaleString();
-        }
-
-        // СОХРАНЕНИЕ/ЗАГРУЗКА
-        function autoSave() {
-            if (game.currentUser) {
-                localStorage.setItem(`grushaGame_${game.currentUser}`, JSON.stringify(game));
-            }
-        }
-
-        function loadGame() {
-            if (game.currentUser) {
-                const saved = localStorage.getItem(`grushaGame_${game.currentUser}`);
-                if (saved) Object.assign(game, JSON.parse(saved));
-            }
-        }
-
-        function updateUserStatus() {
-            els.userStatus.textContent = game.currentUser || 'Гость';
-        }
-
-        // АВТОРИЗАЦИЯ (упрощенная)
-        function showAuthModal() {
-            const modal = document.getElementById('modal');
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <h2>👤 Профиль</h2>
-                    ${game.currentUser ? `
-                        <p>Игрок: <strong>${game.currentUser}</strong></p>
-                        <button onclick="logout()" class="auth-btn" style="background: #FF6B6B; margin: 5px;">Выйти</button>
-                    ` : `
-                        <input id="username" class="auth-input" placeholder="Имя игрока" style="margin: 10px 0;">
-                        <button onclick="login()" class="auth-btn" style="background: #4ECDC4; margin: 5px;">Войти/Создать</button>
-                    `}
-                    <button onclick="document.getElementById('modal').style.display='none'" 
-                            style="background: #95A5A6;">Закрыть</button>
-                </div>
-            `;
-            modal.style.display = 'flex';
-        }
-
-        function login() {
-            const name = document.getElementById('username').value.trim();
-            if (name) {
-                game.currentUser = name;
-                localStorage.setItem('grushaUser', name);
-                loadGame();
-                document.getElementById('modal').style.display = 'none';
-                updateUserStatus();
-            }
-        }
-
-        function logout() {
-            game.currentUser = null;
-            localStorage.removeItem('grushaUser');
-            Object.assign(game, {score: 0, autoClickers: 0, autoCost: 15, superClicks: 0});
-            updateDisplay();
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        // СОБЫТИЯ
-        els.pear.addEventListener('click', clickPear);
-        els.pear.addEventListener('touchstart', e => {
-            e.preventDefault();
-            clickPear();
+    init: () => {
+        UI.renderShop();
+        
+        // Bind Click
+        UI.els.pear.addEventListener('pointerdown', (e) => {
+            // Prevent default zoom functionality
+            e.preventDefault(); 
+            // Calculate center if touch event with no coords (sometimes happens on weak devices)
+            const x = e.clientX || (window.innerWidth / 2);
+            const y = e.clientY || (window.innerHeight / 3);
+            Logic.click(x, y);
         });
 
-        // Добавляем CSS для падения конфетти
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fall {
-                to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+        // Loop UI updates independent of Logic tick
+        requestAnimationFrame(UI.loop);
+    },
 
-        // СЮРПРИЗ ДЛЯ БЫСТРОГО ПРОХОЖДЕНИЯ
-        setTimeout(() => {
-            if (game.score > 10000 && !game.bossActive) {
-                game.autoClickers += 5;
-                showAchievement('surprise');
-            }
-        }, 120000); // 2 минуты бонус
+    loop: () => {
+        // Format numbers nicely (e.g. 1.2M)
+        UI.els.score.innerText = formatNumber(Math.floor(State.score));
+        UI.els.pps.innerText = formatNumber(Math.floor(State.pps));
+        
+        // Update Combo UI
+        if (State.combo > 1.1) {
+            UI.els.combo.classList.add('combo-active');
+            UI.els.comboText.innerText = `x${Math.floor(State.combo * 10) / 10} COMBO!`;
+            UI.els.comboFill.style.width = `${State.comboTimer}%`;
+        } else {
+            UI.els.combo.classList.remove('combo-active');
+        }
 
-        init();
-    </script>
+        // Update Shop Affordability
+        const items = document.querySelectorAll('.shop-item');
+        items.forEach(item => {
+            const id = item.dataset.id;
+            if(!id) return;
+            const cost = Logic.getCost(id);
+            if(State.score >= cost) {
+                item.classList.add('affordable');
+                item.classList.remove('locked');
+            } else {
+                item.classList.remove('affordable');
+                // Optional: add locked class if way too expensive
+                if (State.score < cost * 0.1 && Logic.getCost(id) > 1000) {
+                     item.classList.add('locked');
+                } else {
+                     item.classList.remove('locked');
+                }
+            }
+        });
+        
+        // Stats
+        if(document.getElementById('tab-stats').style.display !== 'none') {
+            document.getElementById('stat-clicks').innerText = State.clickCount;
+            document.getElementById('stat-golden').innerText = State.goldenPearsCaught;
+            const mins = Math.floor((Date.now() - State.startTime) / 60000);
+            document.getElementById('stat-time').innerText = mins;
+        }
+
+        requestAnimationFrame(UI.loop);
+    },
+
+    renderShop: () => {
+        UI.els.shop.innerHTML = '';
+        BUILDINGS.forEach(b => {
+            const currentCost = Logic.getCost(b.id);
+            const currentCount = State.buildings[b.id];
+            
+            const div = document.createElement('div');
+            div.className = 'shop-item';
+            div.dataset.id = b.id;
+            div.onclick = () => Logic.buy(b.id);
+            
+            div.innerHTML = `
+                <div class="item-icon">${b.icon}</div>
+                <div class="item-details">
+                    <div class="item-name">${b.name}</div>
+                    <div class="item-cost">Цена: ${formatNumber(currentCost)}</div>
+                    <div class="item-bonus">+${formatNumber(b.baseProd)} / сек</div>
+                </div>
+                <div class="item-count">${currentCount}</div>
+            `;
+            UI.els.shop.appendChild(div);
+        });
+    },
+
+    punchPear: () => {
+        const p = document.querySelector('.pear-btn');
+        p.style.transform = 'scale(0.85)';
+        setTimeout(() => p.style.transform = 'scale(1)', 50);
+    },
+
+    createParticle: (x, y, text) => {
+        const p = document.createElement('div');
+        p.className = 'click-particle';
+        p.innerText = text;
+        p.style.left = `${x}px`;
+        p.style.top = `${y}px`;
+        // Randomize direction slightly
+        const rX = (Math.random() - 0.5) * 40;
+        p.style.transform = `translateX(${rX}px)`;
+        
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+    },
+
+    showToast: (icon, title) => {
+        const t = document.createElement('div');
+        t.className = 'achievement-toast';
+        t.innerHTML = `<span class="achievement-icon">${icon}</span> <span>${title}</span>`;
+        UI.els.achievements.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    },
+
+    spawnGoldenPear: () => {
+        const pear = document.createElement('div');
+        pear.innerText = '🍐';
+        pear.className = 'golden-pear';
+        // Random start vertical position
+        const startY = Math.random() * (window.innerHeight - 100);
+        pear.style.top = `${startY}px`;
+        pear.style.left = '-60px';
+        pear.style.transition = 'left 4s linear';
+        
+        pear.onpointerdown = (e) => {
+            e.stopPropagation(); // Don't trigger main click
+            
+            // Bonus: 60 seconds of production OR 30% of current score, whichever is less (balance)
+            const bonus = Math.max(State.pps * 60, State.score * 0.25) + 100;
+            
+            State.score += bonus;
+            State.goldenPearsCaught++;
+            UI.createParticle(e.clientX, e.clientY, `+${formatNumber(Math.floor(bonus))}!`);
+            UI.showToast('🌟', 'Золотая груша поймана!');
+            pear.remove();
+        };
+
+        document.body.appendChild(pear);
+        
+        // Trigger animation next frame
+        requestAnimationFrame(() => {
+            pear.style.left = '110vw';
+        });
+
+        // Cleanup
+        setTimeout(() => { if(pear.parentNode) pear.remove(); }, 4100);
+    },
+
+    animatePurchase: (id) => {
+        // Flash effects? Kept simple for now.
+    }
+};
+
+// --- GAME CONTROLLER ---
+const Game = {
+    timer: null,
+    
+    start: () => {
+        Game.load();
+        Logic.calculatePPS();
+        UI.init();
+        
+        // Logic loop (tick)
+        Game.timer = setInterval(Logic.tick, 1000 / CONFIG.FPS);
+        
+        // Autosave
+        setInterval(Game.save, CONFIG.AUTOSAVE_INTERVAL);
+    },
+
+    save: () => {
+        const data = JSON.stringify(State);
+        localStorage.setItem('pearEvolutionSave', data);
+    },
+
+    load: () => {
+        const data = localStorage.getItem('pearEvolutionSave');
+        if (data) {
+            const loaded = JSON.parse(data);
+            // Merge loaded data into State carefully
+            Object.keys(loaded).forEach(k => {
+                if(State.hasOwnProperty(k)) State[k] = loaded[k];
+            });
+            // Recalc
+            Logic.calculatePPS();
+        }
+    },
+    
+    resetSave: () => {
+        if(confirm('Вы уверены? Весь прогресс будет потерян.')) {
+            localStorage.removeItem('pearEvolutionSave');
+            location.reload();
+        }
+    },
+
+    prestige: () => {
+        if(State.score >= CONFIG.WIN_CONDITION) {
+            Game.save();
+            const mins = Math.floor((Date.now() - State.startTime) / 60000);
+            document.getElementById('finalTime').innerText = mins;
+            document.getElementById('winModal').classList.add('visible');
+            
+            // Celebration confetti (simple version)
+            for(let i=0; i<50; i++) {
+                setTimeout(() => {
+                    UI.createParticle(
+                        window.innerWidth/2 + (Math.random()-0.5)*300, 
+                        window.innerHeight/2 + (Math.random()-0.5)*300, 
+                        ['🍐','👑','✨'][Math.floor(Math.random()*3)]
+                    );
+                }, i*50);
+            }
+
+        } else {
+            alert(`Вам нужно ${formatNumber(CONFIG.WIN_CONDITION)} груш для победы!`);
+        }
+    }
+};
+
+// --- UTILS ---
+function formatNumber(num) {
+    if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+    if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+    return num.toLocaleString();
+}
+
+function switchTab(tabName) {
+    // Hide all
+    document.querySelectorAll('.shop-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    
+    // Show one
+    document.getElementById(`tab-${tabName}`).style.display = 'block';
+    
+    // Highlight tab
+    // Finding the tab element is tricky without IDs, just using index matching or text
+    const index = ['upgrades', 'boosts', 'stats'].indexOf(tabName);
+    document.querySelectorAll('.tab')[index].classList.add('active');
+}
+
+// --- BOOTSTRAP ---
+window.onload = Game.start;
+
+</script>
 </body>
 </html>
