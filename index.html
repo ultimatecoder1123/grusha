@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Груша</title>
+    <title>🍐 Идеальная Груша</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-     <script>
+    <script>
         const LOGO_URL = "https://pngicon.ru/file/uploads/grusha.png";
     </script>
     <style>
@@ -14,712 +14,678 @@
         }
         
         body {
-            background: linear-gradient(45deg, #83E8BA, #FFE27D);
+            background: linear-gradient(-45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite, fadeIn 1s ease-in;
             user-select: none;
             -webkit-user-select: none;
             overflow-x: hidden;
             margin: 0;
-            padding: 0 0 60px;
+            padding: 0 0 80px;
             min-height: 100vh;
-            animation: fadeIn 1s ease-in;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 10px;
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .score-board {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             position: sticky;
             top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#4ECDC4 var(--progress, 0%), #FFEAA7 var(--progress, 0%));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #333;
+            position: relative;
+        }
+
+        .progress-circle::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            flex: 1;
+            min-width: 200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.7);
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .main-pear {
+            font-size: clamp(120px, 30vw, 200px);
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            display: block;
+            margin: 30px auto;
+            position: relative;
             z-index: 10;
         }
 
-        .score-board h1 {
-            font-size: clamp(1.2rem, 4vw, 1.5rem);
-            margin: 0;
-            display: flex;
-            align-items: center;
+        .main-pear:active {
+            transform: scale(0.85) rotate(5deg);
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4));
         }
 
-        .score-board p {
-            margin: 0;
-            font-size: clamp(0.9rem, 3vw, 1rem);
+        .main-pear.multiplier-active {
+            animation: pulse 0.5s infinite;
+            filter: drop-shadow(0 15px 30px #4ECDC4);
         }
 
-        .auth-btn {
-            padding: 8px 16px;
-            background: linear-gradient(45deg, #83E8BA, #FFE27D);
-            border: none;
-            border-radius: 5px;
-            font-size: clamp(0.9rem, 3vw, 1rem);
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            touch-action: manipulation;
-        }
-
-        .auth-btn:hover { transform: scale(1.05); }
-        .auth-btn:active { transform: scale(0.95); }
-
-        .pear-btn {
-            font-size: clamp(80px, 20vw, 150px);
-            cursor: pointer;
-            transition: transform 0.1s ease-in-out;
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 5px 3px rgba(0,0,0,0.2));
-            outline: none;
-            display: block;
-            margin: 20px auto;
-            touch-action: manipulation;
-            -webkit-user-drag: none;
-        }
-
-        .pear-btn:active { transform: scale(0.9); }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .powerups {
+        .upgrades-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 8px;
-            margin: 15px 0;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
         }
 
-        .shop-item {
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
+        .upgrade-card {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            transition: transform 0.2s;
+            text-align: center;
+            transition: all 0.3s ease;
             cursor: pointer;
-            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .shop-item:hover { transform: translateX(5px); }
-        .shop-item:active { transform: scale(0.98); }
-
-        .shop-item h3 { 
-            margin: 0;
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
+        .upgrade-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-        .shop-item p {
-            margin: 2px 0 0;
-            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        .upgrade-card:active {
+            transform: scale(0.98);
+        }
+
+        .upgrade-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 0 0 5px;
+        }
+
+        .upgrade-cost {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #FF6B6B;
+            margin: 5px 0;
+        }
+
+        .upgrade-owned {
+            background: linear-gradient(45deg, #4ECDC4, #45B7D1);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .boost-timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .events {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #4ECDC4, #45B7D1);
+            color: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 1000;
+            animation: achievementPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 90vw;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        @keyframes achievementPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            overflow: auto;
-            padding: 10px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 25px;
             width: 90%;
-            max-width: 400px;
-            margin: 15% auto;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #333;
-            transition: color 0.2s;
-        }
-
-        .close:hover { color: #ff0000; }
-
-        .hidden { display: none; }
-
-        .auth-container {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-        }
-
-        .auth-input {
-            padding: 8px;
-            margin: 8px 0;
-            border: 2px solid #83E8BA;
-            border-radius: 5px;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .footer-text {
+            max-width: 450px;
             text-align: center;
-            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
-            color: #333;
-            padding: 5px;
+            position: relative;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .final-boss {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(100px, 25vw, 200px);
+            z-index: 1500;
+            animation: bossShake 0.5s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bossShake { 0%, 100% { transform: translateX(-50%) rotate(0deg); } 25% { transform: translateX(-50%) rotate(-2deg); } 75% { transform: translateX(-50%) rotate(2deg); } }
+
+        .footer {
+            text-align: center;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            color: rgba(255,255,255,0.9);
+            padding: 15px;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.7);
-            z-index: 5;
-        }
-
-        .pear-fall {
-            position: absolute;
-            font-size: clamp(20px, 5vw, 30px);
-            z-index: 500;
-            animation: fall 2s linear forwards;
-            pointer-events: none;
-        }
-
-        @keyframes fall {
-            from { top: -50px; opacity: 1; }
-            to { top: calc(100vh + 50px); opacity: 0; }
-        }
-
-        .achievements {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin: 15px 0;
-        }
-
-        .achievement-item {
-            margin: 5px 0;
-            padding: 5px;
-            background: #83E8BA;
-            border-radius: 5px;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
-        }
-
-        #pest {
-            position: fixed;
-            font-size: clamp(30px, 10vw, 50px);
-            z-index: 500;
-            animation: run 5s linear forwards;
-            top: 40px;
-            pointer-events: none;
-        }
-
-        @keyframes run {
-            0% { left: -10%; }
-            100% { left: 110%; }
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            z-index: 50;
         }
 
         @media (max-width: 600px) {
-            .container { padding: 5px; }
-            .score-board { 
-                padding: 8px;
-                gap: 5px;
-                position: relative;
-            }
-            .powerups { 
-                grid-template-columns: 1fr;
-                gap: 5px;
-            }
-            .modal-content {
-                margin: 10% auto;
-                padding: 10px;
-            }
-        }
-
-        @media (hover: none) {
-            .auth-btn:hover { transform: none; }
-            .shop-item:hover { transform: none; }
+            .container { padding: 10px; }
+            .progress-bar { flex-direction: column; text-align: center; gap: 10px; }
+            .stats { grid-template-columns: 1fr; min-width: auto; }
+            .upgrades-grid { grid-template-columns: 1fr; gap: 12px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="score-board">
-            <h1>Груш: <span id="score">0</span></h1>
-            <p>🚀 Автогруш/сек: <span id="autoClickers">0</span></p>
-            <button class="auth-btn" onclick="showAuthModal()">Аккаунт</button>
-            <span id="userStatus"></span>
+        <div class="progress-bar">
+            <div class="progress-circle" style="--progress: 0%"></div>
+            <div class="stats">
+                <div class="stat-item">🍐 Груш: <span id="score">0</span></div>
+                <div class="stat-item">🤖 Авто: <span id="autoClickers">0</span>/сек</div>
+                <div class="stat-item">⚡ Множитель: <span id="multiplier">1x</span></div>
+                <div class="stat-item">🎯 До босса: <span id="bossProgress">1M</span></div>
+            </div>
+            <button class="auth-btn" onclick="showAuthModal()" style="
+                padding: 12px 20px; background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+                border: none; border-radius: 25px; color: white; font-weight: bold;
+                cursor: pointer; transition: all 0.3s; font-size: 1rem;">
+                👤 <span id="userStatus"></span>
+            </button>
         </div>
-        <div style="text-align:center;">
-            <div id="pear" class="pear-btn">🍐</div>
-            <p>Кликай быстрее!</p>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div id="pear" class="main-pear">🍐</div>
+            <h2 style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin: 10px 0;">Кликай на главную грушу!</h2>
         </div>
-        <div class="powerups">
-            <div class="shop-item" onclick="buyAutoClicker()">
-                <div>
-                    <h3>🤖 Автогруш</h3>
-                    <p>Цена: <span id="autoClickerCost">50</span> 🍐</p>
-                </div>
-                <span id="autoClickerCount">0</span>
+
+        <div class="upgrades-grid">
+            <div class="upgrade-card" onclick="buyUpgrade('auto')">
+                <div class="upgrade-icon">🤖</div>
+                <div class="upgrade-title">Автогруш</div>
+                <div class="upgrade-cost" id="autoCost">15</div>
+                <div class="upgrade-owned" id="autoOwned">0</div>
             </div>
-            <div class="shop-item" onclick="buyMultiplier()">
-                <div>
-                    <h3>⚡ Соковыжималка (30 сек)</h3>
-                    <p>Цена: <span id="multiplierCost">200</span> 🍐</p>
-                </div>
-                <span id="multiplierCount">0</span>
+            <div class="upgrade-card" onclick="buyUpgrade('multi')">
+                <div class="upgrade-icon">⚡</div>
+                <div class="upgrade-title">Мега-клик (20c)</div>
+                <div class="upgrade-cost" id="multiCost">75</div>
+                <div class="upgrade-owned" id="multiOwned">Готов</div>
             </div>
-            <div class="shop-item" onclick="removePest()">
-                <div>
-                    <h3>🛡 Убить вредителя</h3>
-                    <p>Цена: 5000 🍐</p>
-                </div>
+            <div class="upgrade-card" onclick="buyUpgrade('super')">
+                <div class="upgrade-icon">⭐</div>
+                <div class="upgrade-title">Супер-клик</div>
+                <div class="upgrade-cost" id="superCost">500</div>
+                <div class="upgrade-owned" id="superOwned">0</div>
             </div>
-            <div id="finishGameBtn" class="shop-item hidden" onclick="finishGame()">
-                <div>
-                    <h3>🏁 Закончить игру</h3>
-                    <p>Цена: 1,000,000,000 🍐</p>
-                </div>
+            <div class="upgrade-card" onclick="buyUpgrade('boss')">
+                <div class="upgrade-icon">👹</div>
+                <div class="upgrade-title">Босс!</div>
+                <div class="upgrade-cost" id="bossCost">1,000,000</div>
+                <div class="upgrade-owned" id="bossOwned">ПОБЕДИ</div>
             </div>
         </div>
-        <div class="achievements">
-            <h2>Достижения</h2>
-            <div id="achievementList"></div>
+
+        <div class="events">
+            <h3 style="margin: 0 0 15px; color: #333;">🎉 Достижения</h3>
+            <div id="achievements" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;"></div>
         </div>
     </div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">×</span>
-            <div id="modalBody"></div>
-        </div>
-    </div>
-    <div class="footer-text">Весь прогресс хранится в браузере</div>
+
+    <div id="modal" class="modal"></div>
+    <div id="achievementPopup" class="achievement-popup" style="display: none;"></div>
+    <div class="footer">⚡ Прогресс сохраняется автоматически | За 25 минут до победы! 🍐</div>
 
     <script>
-        // Объявление переменных
-        let score = 0,
-            autoClickers = 0,
-            autoClickerCost = 50,
-            multiplierActive = false,
-            clickTimes = [],
-            clickIntervals = [],
-            isCaptchaActive = false,
-            currentUser = null,
-            pestActive = false,
-            pestSlayerAchieved = false,
-            pestElem = null;
+        // ИГРОВЫЕ ПЕРЕМЕННЫЕ
+        let game = {
+            score: 0,
+            autoClickers: 0, autoCost: 15,
+            multiplierActive: false, multiplierEnd: 0,
+            superClicks: 0, superCost: 500,
+            bossActive: false, bossHealth: 0,
+            achievements: {},
+            combos: 0, lastClick: 0,
+            currentUser: localStorage.getItem('grushaUser') || null
+        };
 
-        // DOM элементы
-        const modal = document.getElementById('modal'),
-              modalBody = document.getElementById('modalBody'),
-              achievementList = document.getElementById('achievementList'),
-              pearBtn = document.getElementById('pear');
+        // ДОСТИЖЕНИЯ (прогрессивная система)
+        const ACHIEVEMENTS = {
+            newbie: { name: '🥳 Первый вкус', goal: 50, current: 0 },
+            farmer: { name: '🌱 Грушевый фермер', goal: 500, current: 0 },
+            master: { name: '🍐 Мастер груш', goal: 5000, current: 0 },
+            auto: { name: '🤖 Автоматизация', goal: 10, current: 0 },
+            combo: { name: '💥 Комбо-мастер', goal: 50, current: 0 },
+            super: { name: '⭐ Супергерой', goal: 5, current: 0 },
+            millionaire: { name: '💰 Миллионер', goal: 1000000, current: 0 },
+            boss: { name: '👹 Победитель!', goal: 1, current: 0 }
+        };
 
-        // Константы
-        const bannedNames = ["ultimate coder"];
-        const bannedWords = ["fuck", "shit", "bitch", "хуй", "пизда", "сука"];
-        const achievements = [
-            { id: 'first100', name: 'Новичок 🥳', condition: () => score >= 100, completed: false },
-            { id: 'auto10', name: 'Автоматизатор 🤖', condition: () => autoClickers >= 10, completed: false },
-            { id: 'score1000', name: 'Грушевый мастер 🍐', condition: () => score >= 1000, completed: false },
-            { id: 'multiplier', name: 'Соковыжиматель ⚡', condition: () => multiplierActive, completed: false },
-            { id: 'pestSlayer', name: 'Убийца вредителей 🐛', condition: () => pestSlayerAchieved, completed: false }
-        ];
+        // DOM ЭЛЕМЕНТЫ
+        const els = {
+            score: document.getElementById('score'),
+            autoClickers: document.getElementById('autoClickers'),
+            multiplier: document.getElementById('multiplier'),
+            bossProgress: document.getElementById('bossProgress'),
+            pear: document.getElementById('pear'),
+            progressCircle: document.querySelector('.progress-circle'),
+            achievements: document.getElementById('achievements'),
+            userStatus: document.getElementById('userStatus')
+        };
 
-        // Основные функции
-        function updateUserStatus() {
-            document.getElementById('userStatus').textContent = 
-                currentUser ? `Вы вошли как: ${currentUser}` : '';
+        // ИНИЦИАЛИЗАЦИЯ
+        function init() {
+            loadGame();
+            updateDisplay();
+            autoSaveInterval = setInterval(autoSave, 5000);
+            gameLoop();
+            if (game.currentUser) updateUserStatus();
         }
 
-        function saveProgress() {
-            if (!currentUser) return;
-            const progress = {
-                score,
-                autoClickers,
-                autoClickerCost,
-                multiplierActive,
-                achievements: achievements.map(a => a.completed)
-            };
-            const accountDataStr = localStorage.getItem(`gameAccount_${currentUser}`);
-            if (accountDataStr) {
-                const accountData = JSON.parse(accountDataStr);
-                accountData.progress = progress;
-                localStorage.setItem(`gameAccount_${currentUser}`, JSON.stringify(accountData));
-            }
-        }
-
-        function updateDisplay() {
-            const isCreator = currentUser === "creatorucgame";
-            document.getElementById('score').textContent = isCreator ? "∞" : Math.floor(score);
-            document.getElementById('autoClickers').textContent = isCreator ? "∞" : autoClickers;
-            document.getElementById('autoClickerCost').textContent = autoClickerCost;
-            document.getElementById('autoClickerCount').textContent = isCreator ? "∞" : autoClickers;
-            document.getElementById('finishGameBtn').classList.toggle('hidden', !(score >= 100 || isCreator));
-            checkAchievements();
-            updateUserStatus();
-            if (currentUser && !isCreator) saveProgress();
-        }
-
-        function clickPear(event) {
-            if (isCaptchaActive) return;
+        // ОСНОВНОЙ ЦИКЛ
+        function gameLoop() {
             const now = Date.now();
-            clickTimes.push(now);
-            if (clickTimes.length > 1) {
-                clickIntervals.push(now - clickTimes[clickTimes.length - 2]);
+            
+            // Автоклики
+            game.score += game.autoClickers * 0.016; // 60 FPS
+            
+            // Множитель
+            if (game.multiplierActive && now > game.multiplierEnd) {
+                game.multiplierActive = false;
             }
-
-            clickTimes = clickTimes.filter(time => now - time < 20000);
-            clickIntervals = clickIntervals.slice(-40);
-
-            if (currentUser !== "creatorucgame") {
-                score += multiplierActive ? 2 : 1;
+            
+            // Босс логика
+            if (game.bossActive && game.bossHealth > 0) {
+                game.bossHealth -= 0.1; // Постепенное снижение
+                if (game.bossHealth <= 0) defeatBoss();
             }
+            
             updateDisplay();
+            requestAnimationFrame(gameLoop);
+        }
 
-            if (clickTimes.length > 200) {
-                showCaptcha("Слишком быстрая скорость кликов!");
-            } else if (checkConsistentIntervals()) {
-                showCaptcha("Обнаружены подозрительно ровные клики!");
+        // КЛИК ПО ГРУШЕ
+        function clickPear() {
+            const now = Date.now();
+            const clickPower = game.multiplierActive ? 5 : (game.superClicks >= 1 ? 3 : 1);
+            
+            // Комбо система
+            if (now - game.lastClick < 200) {
+                game.combos++;
+            } else {
+                game.combos = 0;
+            }
+            game.lastClick = now;
+            
+            if (game.combos > 10) clickPower *= 1.5;
+            
+            game.score += clickPower;
+            
+            // Визуальный фидбек
+            els.pear.style.animation = 'shake 0.1s';
+            setTimeout(() => els.pear.style.animation = 'bounce 2s infinite', 100);
+            
+            // Проверка достижений
+            checkAchievements();
+            
+            if (!game.bossActive && game.score >= 1000000) {
+                spawnBoss();
             }
         }
 
-        function checkConsistentIntervals() {
-            if (clickIntervals.length < 40) return false;
-            const avg = clickIntervals.reduce((a, b) => a + b, 0) / clickIntervals.length;
-            return clickIntervals.every(i => Math.abs(i - avg) < 10) && 
-                   (clickTimes[clickTimes.length - 1] - clickTimes[0] >= 20000);
-        }
-
-        // Покупки
-        function buyAutoClicker() {
-            if (currentUser === "creatorucgame" || score < autoClickerCost) return;
-            score -= autoClickerCost;
-            autoClickers++;
-            autoClickerCost = Math.floor(autoClickerCost * 1.15);
-            updateDisplay();
-        }
-
-        function buyMultiplier() {
-            if (currentUser === "creatorucgame" || score < 200 || multiplierActive) return;
-            score -= 200;
-            multiplierActive = true;
-            updateDisplay();
-            setTimeout(() => {
-                multiplierActive = false;
-                updateDisplay();
-            }, 30000);
-        }
-
-        function removePest() {
-            if (!pestActive) {
-                alert("Нет активного вредителя!");
+        // ПОКУПКИ
+        function buyUpgrade(type) {
+            const costs = {
+                auto: { cost: game.autoCost, count: game.autoClickers },
+                super: { cost: game.superCost, count: game.superClicks }
+            };
+            
+            const upgrade = costs[type];
+            if (!upgrade || game.score < upgrade.cost) {
+                shakeUpgrade(type);
                 return;
             }
-            const isCreator = currentUser === "creatorucgame";
-            if (isCreator || score >= 5000) {
-                if (!isCreator) score -= 5000;
-                pestActive = false;
-                removePestElement();
-                pestSlayerAchieved = true;
-                updateDisplay();
-                alert("Вредитель уничтожён!");
-            } else {
-                alert("Недостаточно груш!");
+            
+            game.score -= upgrade.cost;
+            
+            if (type === 'auto') {
+                game.autoClickers++;
+                game.autoCost = Math.floor(game.autoCost * 1.25);
+            } else if (type === 'super') {
+                game.superClicks++;
+                game.superCost = Math.floor(game.superCost * 2);
+            } else if (type === 'multi') {
+                activateMultiplier();
+            } else if (type === 'boss') {
+                if (game.score >= 1000000) spawnBoss();
             }
-        }
-
-        function finishGame() {
-            const finishCost = 1000000000;
-            const isCreator = currentUser === "creatorucgame";
-            if (isCreator || score >= finishCost) {
-                if (!isCreator) score -= finishCost;
-                updateDisplay();
-                window.location.href = "https://sites.google.com/view/grushauc/finish1";
-            } else {
-                alert("Недостаточно груш!");
-            }
-        }
-
-        // Капча
-        function showCaptcha(message) {
-            isCaptchaActive = true;
-            modalBody.innerHTML = `
-                <div class="auth-container">
-                    <h2>Проверка на робота</h2>
-                    <p>${message}</p>
-                    <button class="auth-btn" onclick="showMathCaptcha()">Я не робот</button>
-                </div>`;
-            modal.style.display = 'flex';
-        }
-
-        function showMathCaptcha() {
-            const num1 = Math.floor(Math.random() * 10) + 1,
-                  num2 = Math.floor(Math.random() * 10) + 1,
-                  correct = num1 + num2;
-            modalBody.innerHTML = `
-                <div class="auth-container">
-                    <h2>Проверка на робота</h2>
-                    <p>Решите: ${num1} + ${num2} = ?</p>
-                    <input type="number" id="captcha-answer" class="auth-input" placeholder="Ответ">
-                    <button class="auth-btn" onclick="checkCaptcha(${correct})">Проверить</button>
-                </div>`;
-        }
-
-        function checkCaptcha(correct) {
-            const answer = parseInt(document.getElementById('captcha-answer').value);
-            if (answer === correct) {
-                isCaptchaActive = false;
-                clickTimes = [];
-                clickIntervals = [];
-                modal.style.display = 'none';
-            } else {
-                alert("Неправильно. Попробуйте ещё раз.");
-            }
-        }
-
-        // Авторизация
-        function showAuthModal() {
-            modalBody.innerHTML = currentUser ? `
-                <div class="auth-container">
-                    <h2>Аккаунт</h2>
-                    <p>Вы вошли как: ${currentUser}</p>
-                    <button class="auth-btn" onclick="logoutUser()">Выйти</button>
-                    <button class="auth-btn" onclick="closeModal()">Закрыть</button>
-                </div>
-            ` : `
-                <div class="auth-container">
-                    <h2>Войти или Зарегистрироваться</h2>
-                    <button class="auth-btn" onclick="showLoginForm()">Войти</button>
-                    <button class="auth-btn" onclick="showRegisterForm()">Регистрация</button>
-                    <div id="authFormContainer"></div>
-                </div>
-            `;
-            modal.style.display = 'flex';
-        }
-
-        function showLoginForm() {
-            document.getElementById('authFormContainer').innerHTML = `
-                <input type="text" id="login-username" class="auth-input" placeholder="Имя">
-                <input type="password" id="login-password" class="auth-input" placeholder="Пароль">
-                <button class="auth-btn" onclick="processLogin()">Войти</button>
-            `;
-        }
-
-        function showRegisterForm() {
-            document.getElementById('authFormContainer').innerHTML = `
-                <input type="text" id="register-username" class="auth-input" placeholder="Имя">
-                <input type="password" id="register-password" class="auth-input" placeholder="Пароль">
-                <input type="password" id="register-password-confirm" class="auth-input" placeholder="Подтвердите">
-                <button class="auth-btn" onclick="processRegistration()">Зарегистрироваться</button>
-            `;
-        }
-
-        function processRegistration() {
-            const username = document.getElementById('register-username').value.trim();
-            const password = document.getElementById('register-password').value;
-            const passwordConfirm = document.getElementById('register-password-confirm').value;
-
-            if (!username || !password) return alert("Заполните все поля!");
-            if (bannedNames.includes(username.toLowerCase())) return alert("Имя недопустимо!");
-            if (bannedWords.some(word => username.toLowerCase().includes(word))) return alert("Недопустимые слова!");
-            if (password !== passwordConfirm) return alert("Пароли не совпадают!");
-            if (localStorage.getItem(`gameAccount_${username}`)) return alert("Пользователь уже существует!");
-
-            const initialProgress = {
-                score: 0,
-                autoClickers: 0,
-                autoClickerCost: 50,
-                multiplierActive: false,
-                achievements: achievements.map(() => false)
-            };
-            localStorage.setItem(`gameAccount_${username}`, JSON.stringify({ username, password, progress: initialProgress }));
-            currentUser = username;
-            localStorage.setItem('gameCurrentUser', username);
-            alert(`Регистрация успешна! Привет, ${username}`);
-            closeModal();
-            updateUserStatus();
-        }
-
-        function processLogin() {
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value;
-            const accountDataStr = localStorage.getItem(`gameAccount_${username}`);
-
-            if (!username || !password) return alert("Заполните все поля!");
-            if (!accountDataStr) return alert("Пользователь не найден!");
-
-            const accountData = JSON.parse(accountDataStr);
-            if (accountData.password !== password) return alert("Неверный пароль!");
-
-            currentUser = username;
-            localStorage.setItem('gameCurrentUser', username);
-
-            if (username === "creatorucgame" && password === "123") {
-                score = Infinity;
-                autoClickers = Infinity;
-                achievements.forEach(a => a.completed = true);
-            } else {
-                const { progress } = accountData;
-                score = progress.score;
-                autoClickers = progress.autoClickers;
-                autoClickerCost = progress.autoClickerCost;
-                multiplierActive = progress.multiplierActive;
-                achievements.forEach((a, i) => a.completed = progress.achievements[i]);
-            }
+            
+            successVibration();
             updateDisplay();
-            updateAchievementsDisplay();
-            alert(`Привет, ${username}!`);
-            closeModal();
         }
 
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem('gameCurrentUser');
-            alert("Вы вышли из аккаунта.");
-            closeModal();
-            updateUserStatus();
-            location.reload();
+        function activateMultiplier() {
+            if (game.score < 75 || game.multiplierActive) return;
+            game.score -= 75;
+            game.multiplierActive = true;
+            game.multiplierEnd = Date.now() + 20000;
+            els.pear.classList.add('multiplier-active');
         }
 
-        function closeModal() {
-            modal.style.display = 'none';
+        function spawnBoss() {
+            game.bossActive = true;
+            game.bossHealth = 100;
+            const boss = document.createElement('div');
+            boss.id = 'boss';
+            boss.className = 'final-boss';
+            boss.textContent = '👹';
+            document.body.appendChild(boss);
         }
 
-        // Достижения
-        function checkAchievements() {
-            achievements.forEach(a => {
-                if (!a.completed && a.condition()) {
-                    a.completed = true;
-                    spawnFallingPears();
+        function defeatBoss() {
+            showAchievement('boss');
+            game.bossActive = false;
+            document.getElementById('boss')?.remove();
+            confettiExplosion();
+            setTimeout(() => {
+                alert('🎉 ПОБЕДА! Ты прошёл игру за рекордное время! 🍐👑');
+                if (game.currentUser) {
+                    localStorage.setItem(`grushaWin_${game.currentUser}`, Date.now());
                 }
-            });
-            updateAchievementsDisplay();
+            }, 1000);
         }
 
-        function spawnFallingPears() {
-            for (let i = 0; i < 15; i++) {
-                const pear = document.createElement('div');
-                pear.className = 'pear-fall';
-                pear.textContent = '🍐';
-                pear.style.left = `${Math.random() * 100}%`;
-                document.body.appendChild(pear);
-                setTimeout(() => pear.remove(), 2000);
-            }
+        // ОБНОВЛЕНИЕ ИНТЕРФЕЙСА
+        function updateDisplay() {
+            els.score.textContent = formatNumber(game.score);
+            els.autoClickers.textContent = game.autoClickers;
+            els.multiplier.textContent = game.multiplierActive ? '5x' : '1x';
+            
+            const bossNeed = 1000000;
+            els.bossProgress.textContent = formatNumber(Math.max(0, bossNeed - game.score));
+            
+            // Прогресс круг
+            const progress = Math.min(100, (game.score / bossNeed) * 100);
+            els.progressCircle.style.setProperty('--progress', progress + '%');
+            
+            // Обновление цен
+            document.getElementById('autoCost').textContent = formatNumber(game.autoCost);
+            document.getElementById('superCost').textContent = formatNumber(game.superCost);
+            document.getElementById('bossCost').textContent = formatNumber(1000000);
+            
+            // Активные апгрейды
+            document.getElementById('autoOwned').textContent = game.autoClickers;
+            document.getElementById('superOwned').textContent = game.superClicks;
+            
+            // Проверка достижений
+            Object.keys(ACHIEVEMENTS).forEach(id => {
+                const ach = ACHIEVEMENTS[id];
+                if (ach.current < ach.goal) ach.current = Math.floor(game[id === 'auto' ? 'autoClickers' : 'score']);
+            });
+            
+            updateAchievementsDisplay();
+            updateUserStatus();
         }
 
         function updateAchievementsDisplay() {
-            achievementList.innerHTML = achievements
-                .filter(a => a.completed)
-                .map(a => `<div class="achievement-item">${a.name}</div>`)
-                .join('');
+            els.achievements.innerHTML = Object.values(ACHIEVEMENTS).map(ach => `
+                <div style="
+                    background: ${ach.current >= ach.goal ? 'linear-gradient(45deg, #4ECDC4, #45B7D1)' : 'rgba(255,255,255,0.7)'};
+                    color: ${ach.current >= ach.goal ? 'white' : '#666'};
+                    padding: 12px;
+                    border-radius: 15px;
+                    font-weight: bold;
+                    text-align: center;
+                ">
+                    ${ach.name}<br>
+                    <small>${ach.current}/${ach.goal}</small>
+                </div>
+            `).join('');
         }
 
-        // Вредитель
-        function spawnPest() {
-            if (pestActive || currentUser === "creatorucgame") return;
-            pestActive = true;
-            pestElem = document.createElement('div');
-            pestElem.id = 'pest';
-            pestElem.textContent = '🐛';
-            document.body.appendChild(pestElem);
-
-            const pestInterval = setInterval(() => {
-                if (!pestActive || !pestElem) {
-                    clearInterval(pestInterval);
-                    return;
+        // ДОСТИЖЕНИЯ
+        function checkAchievements() {
+            Object.entries(ACHIEVEMENTS).forEach(([id, ach]) => {
+                if (ach.current >= ach.goal && !localStorage.getItem(`ach_${id}_${game.currentUser || 'guest'}`)) {
+                    showAchievement(id);
+                    localStorage.setItem(`ach_${id}_${game.currentUser || 'guest'}`, 'true');
                 }
-                const pestRect = pestElem.getBoundingClientRect();
-                const scoreRect = document.getElementById('score').getBoundingClientRect();
-                if (pestRect.left + pestRect.width >= scoreRect.left && 
-                    pestRect.left <= scoreRect.right && 
-                    !pestElem.dataset.stolen) {
-                    const stolen = Math.floor(Math.random() * 15) + 1;
-                    score = Math.max(0, score - stolen);
-                    updateDisplay();
-                    pestElem.dataset.stolen = true;
-                }
-            }, 100);
-
-            pestElem.addEventListener('animationend', () => {
-                pestActive = false;
-                clearInterval(pestInterval);
-                removePestElement();
-                scheduleNextPest();
             });
         }
 
-        function removePestElement() {
-            if (pestElem) {
-                pestElem.remove();
-                pestElem = null;
+        function showAchievement(id) {
+            const popup = document.getElementById('achievementPopup');
+            popup.textContent = ACHIEVEMENTS[id].name;
+            popup.style.display = 'block';
+            successVibration();
+            confettiExplosion();
+            setTimeout(() => popup.style.display = 'none', 3000);
+        }
+
+        // ВИЗУАЛЬНЫЕ ЭФФЕКТЫ
+        function confettiExplosion() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.textContent = '✨';
+                confetti.style.cssText = `
+                    position: fixed; left: ${Math.random()*100}vw; top: -10px;
+                    font-size: ${Math.random()*20+10}px; z-index: 10000;
+                    animation: fall ${Math.random()*3+2}s linear forwards;
+                    color: hsl(${Math.random()*360}, 70%, 60%);
+                `;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
             }
         }
 
-        function scheduleNextPest() {
-            setTimeout(spawnPest, Math.floor(Math.random() * 20000) + 10000);
+        function shakeUpgrade(type) {
+            const card = document.querySelector(`[onclick="buyUpgrade('${type}')"]`);
+            card.style.animation = 'shake 0.3s';
+            setTimeout(() => card.style.animation = '', 300);
         }
 
-        // Автозагрузка
-        function autoLogin() {
-            const savedUser = localStorage.getItem('gameCurrentUser');
-            if (!savedUser) return;
-            
-            currentUser = savedUser;
-            const accountDataStr = localStorage.getItem(`gameAccount_${currentUser}`);
-            if (!accountDataStr) return;
+        function successVibration() {
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
 
-            const accountData = JSON.parse(accountDataStr);
-            if (currentUser === "creatorucgame" && accountData.password === "123") {
-                score = Infinity;
-                autoClickers = Infinity;
-                achievements.forEach(a => a.completed = true);
-            } else {
-                const { progress } = accountData;
-                score = progress.score;
-                autoClickers = progress.autoClickers;
-                autoClickerCost = progress.autoClickerCost;
-                multiplierActive = progress.multiplierActive;
-                achievements.forEach((a, i) => a.completed = progress.achievements[i]);
+        // УТИЛИТЫ
+        function formatNumber(num) {
+            if (num >= 1e6) return (num/1e6).toFixed(1) + 'M';
+            if (num >= 1e3) return (num/1e3).toFixed(1) + 'K';
+            return Math.floor(num).toLocaleString();
+        }
+
+        // СОХРАНЕНИЕ/ЗАГРУЗКА
+        function autoSave() {
+            if (game.currentUser) {
+                localStorage.setItem(`grushaGame_${game.currentUser}`, JSON.stringify(game));
             }
-            updateDisplay();
-            updateAchievementsDisplay();
-            updateUserStatus();
         }
 
-        // Инициализация
-        setInterval(() => {
-            if (currentUser !== "creatorucgame") score += autoClickers;
-            updateDisplay();
-        }, 1000);
+        function loadGame() {
+            if (game.currentUser) {
+                const saved = localStorage.getItem(`grushaGame_${game.currentUser}`);
+                if (saved) Object.assign(game, JSON.parse(saved));
+            }
+        }
 
-        pearBtn.addEventListener('click', clickPear);
-        pearBtn.addEventListener('touchstart', (e) => {
+        function updateUserStatus() {
+            els.userStatus.textContent = game.currentUser || 'Гость';
+        }
+
+        // АВТОРИЗАЦИЯ (упрощенная)
+        function showAuthModal() {
+            const modal = document.getElementById('modal');
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>👤 Профиль</h2>
+                    ${game.currentUser ? `
+                        <p>Игрок: <strong>${game.currentUser}</strong></p>
+                        <button onclick="logout()" class="auth-btn" style="background: #FF6B6B; margin: 5px;">Выйти</button>
+                    ` : `
+                        <input id="username" class="auth-input" placeholder="Имя игрока" style="margin: 10px 0;">
+                        <button onclick="login()" class="auth-btn" style="background: #4ECDC4; margin: 5px;">Войти/Создать</button>
+                    `}
+                    <button onclick="document.getElementById('modal').style.display='none'" 
+                            style="background: #95A5A6;">Закрыть</button>
+                </div>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function login() {
+            const name = document.getElementById('username').value.trim();
+            if (name) {
+                game.currentUser = name;
+                localStorage.setItem('grushaUser', name);
+                loadGame();
+                document.getElementById('modal').style.display = 'none';
+                updateUserStatus();
+            }
+        }
+
+        function logout() {
+            game.currentUser = null;
+            localStorage.removeItem('grushaUser');
+            Object.assign(game, {score: 0, autoClickers: 0, autoCost: 15, superClicks: 0});
+            updateDisplay();
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // СОБЫТИЯ
+        els.pear.addEventListener('click', clickPear);
+        els.pear.addEventListener('touchstart', e => {
             e.preventDefault();
-            clickPear(e);
+            clickPear();
         });
 
-        scheduleNextPest();
-        autoLogin();
-        updateDisplay();
+        // Добавляем CSS для падения конфетти
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // СЮРПРИЗ ДЛЯ БЫСТРОГО ПРОХОЖДЕНИЯ
+        setTimeout(() => {
+            if (game.score > 10000 && !game.bossActive) {
+                game.autoClickers += 5;
+                showAchievement('surprise');
+            }
+        }, 120000); // 2 минуты бонус
+
+        init();
     </script>
 </body>
 </html>
